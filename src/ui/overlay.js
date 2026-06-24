@@ -1,11 +1,19 @@
-import { renderLeaderboard } from './leaderboard.js';
+import { renderLeaderboard, loadScores } from './leaderboard.js';
 
 const overlayEl      = document.getElementById('overlay');
 const startScreenEl  = document.getElementById('startScreen');
 const gameoverEl     = document.getElementById('gameoverScreen');
 const finalScoreEl   = document.getElementById('finalScore');
+const startHiScoreEl = document.getElementById('startHiScore');
 
 export function showStart() {
+  const scores = loadScores();
+  if (scores.length > 0) {
+    startHiScoreEl.textContent = `Best: ${scores[0].score}`;
+    startHiScoreEl.style.display = '';
+  } else {
+    startHiScoreEl.style.display = 'none';
+  }
   startScreenEl.classList.remove('hidden');
   gameoverEl.classList.add('hidden');
   overlayEl.classList.remove('hidden');
