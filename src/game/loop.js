@@ -19,11 +19,9 @@ let engineHandle = null;
 function update() {
   state.frame++;
 
-  // Speed ramp
-  state.speed = Math.min(BASE_SPEED + Math.floor(state.score / 200) * 0.5, MAX_SPEED);
+  // Speed ramp every 10 seconds (600 frames)
+  state.speed = Math.min(BASE_SPEED + Math.floor(state.frame / 600) * 0.5, MAX_SPEED);
 
-  // Score per frame
-  state.score++;
   if (state.frame % 10 === 0) updateHUD(state.score, state.lives);
 
   // Invincibility countdown
@@ -32,8 +30,8 @@ function update() {
   updateBackground();
   updatePlayer();
 
-  // Spawn obstacles
-  const obsInterval = Math.max(40, 90 - Math.floor(state.score / 300) * 5);
+  // Spawn obstacles — tighten interval based on elapsed time
+  const obsInterval = Math.max(40, 90 - Math.floor(state.frame / 1800) * 5);
   if (state.frame % obsInterval === 0) spawnObstacle();
 
   // Spawn coins

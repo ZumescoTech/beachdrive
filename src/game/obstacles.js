@@ -30,12 +30,26 @@ export function spawnObstacle() {
   state.obstacles.push({ lane, x: LANE_CENTERS[lane], y: -60, ...type });
 }
 
+const DODGE_POINTS = 10;
+// y position considered "safely past" the player
+const PLAYER_BOTTOM = () => state.player.y + state.player.h / 2;
+
 // Returns true if the game should end (lives hit 0).
 export function updateObstacles() {
   const { speed, invincible, player: p } = state;
+  let scoreAdded = false;
 
   state.obstacles = state.obstacles.filter(o => {
+    const wasAbovePlayer = o.y < PLAYER_BOTTOM();
     o.y += speed;
+
+    // Award dodge points when obstacle crosses past the player for the first time
+    if (!o.dodged && wasAbovePlayer && o.y >= PLAYER_BOTTOM()) {
+      o.dodged = true;
+      state.score += DODGE_POINTS;
+      scoreAdded = true;
+    }
+
     if (o.y > 680) return false;
 
     if (invincible === 0 && rectsOverlap(p.x, p.y, p.w, p.h, o.x, o.y, o.w, o.h)) {
@@ -49,6 +63,8 @@ export function updateObstacles() {
 
     return true;
   });
+
+  if (scoreAdded) updateHUD(state.score, state.lives);
 
   return state.lives <= 0;
 }
