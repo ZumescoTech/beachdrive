@@ -9,10 +9,12 @@ import { drawCanvasHUD } from './hud.js';
 import { updateHUD } from '../ui/hud.js';
 import { showGameOver } from '../ui/overlay.js';
 import { saveScore } from '../ui/leaderboard.js';
-import { playSound } from '../audio/sounds.js';
+import { playSound, stopSound, updateEngineSound } from '../audio/sounds.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
+let engineHandle = null;
 
 function update() {
   state.frame++;
@@ -45,6 +47,7 @@ function update() {
 
   updateCoins();
   updateParticles();
+  updateEngineSound(engineHandle, state.speed, MAX_SPEED);
 }
 
 function draw() {
@@ -65,6 +68,8 @@ function tick() {
 
 function endGame() {
   state.phase = 'dead';
+  stopSound(engineHandle);
+  engineHandle = null;
   if (state.score > state.hiScore) state.hiScore = state.score;
   saveScore(state.score);
   playSound('gameover');
@@ -72,5 +77,7 @@ function endGame() {
 }
 
 export function startLoop() {
+  stopSound(engineHandle);
+  engineHandle = playSound('engine', { volume: 0.04 });
   requestAnimationFrame(tick);
 }
