@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beach Drive Escape</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<div id="ui-top">
+  <span>Beach Drive</span>
+  <span id="scoreLabel">Score: 0</span>
+  <span id="livesLabel">❤️❤️❤️</span>
+</div>
+<canvas id="gameCanvas" width="420" height="600"></canvas>
+
+<div id="overlay">
+  <div class="overlay-box" id="startScreen">
+    <h1>Beach Drive</h1>
+    <p>Dodge obstacles on the open beach road!<br>Switch lanes to survive.</p>
+    <button id="startBtn">START GAME</button>
+    <div class="controls-hint">Arrow Keys &nbsp;|&nbsp; A D Keys &nbsp;|&nbsp; Tap screen</div>
+  </div>
+
+  <div class="overlay-box hidden" id="gameoverScreen">
+    <h1>Wipeout!</h1>
+    <div class="score-display" id="finalScore">Score: 0</div>
+    <div id="leaderboardDisplay"></div>
+    <button id="restartBtn">TRY AGAIN</button>
+  </div>
+</div>
+
+<!-- Mobile on-screen controls (shown via CSS on touch devices) -->
+<div id="touch-controls">
+  <button id="btnLeft" aria-label="Move Left">&#8592;</button>
+  <button id="btnRight" aria-label="Move Right">&#8594;</button>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
