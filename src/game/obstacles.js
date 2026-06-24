@@ -9,8 +9,23 @@ function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
       && Math.abs(ay - by) < (ah + bh) / 2 - 6;
 }
 
+// Minimum vertical gap (px) before another obstacle can appear in the same lane.
+const LANE_SAFE_GAP = 180;
+
 export function spawnObstacle() {
-  const lane = Math.floor(Math.random() * 3);
+  // Find which lanes are safe to spawn into (no recent obstacle near the top)
+  const blockedLanes = new Set(
+    state.obstacles
+      .filter(o => o.y < LANE_SAFE_GAP)
+      .map(o => o.lane)
+  );
+
+  const safeLanes = [0, 1, 2].filter(l => !blockedLanes.has(l));
+
+  // If all lanes are blocked, skip this spawn tick
+  if (safeLanes.length === 0) return;
+
+  const lane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
   const type = OBS_TYPES[Math.floor(Math.random() * OBS_TYPES.length)];
   state.obstacles.push({ lane, x: LANE_CENTERS[lane], y: -60, ...type });
 }
