@@ -31,13 +31,19 @@ export function spawnObstacle() {
 }
 
 const DODGE_POINTS = 10;
-// y position considered "safely past" the player
+const MAX_MULTIPLIER = 5;
 const PLAYER_BOTTOM = () => state.player.y + state.player.h / 2;
+
+export function getMultiplier() {
+  return Math.min(Math.floor(state.combo / 3) + 1, MAX_MULTIPLIER);
+}
 
 // Returns true if the game should end (lives hit 0).
 export function updateObstacles() {
   const { speed, invincible, player: p } = state;
   let scoreAdded = false;
+
+  if (state.comboFlash > 0) state.comboFlash--;
 
   state.obstacles = state.obstacles.filter(o => {
     const wasAbovePlayer = o.y < PLAYER_BOTTOM();
@@ -46,7 +52,11 @@ export function updateObstacles() {
     // Award dodge points when obstacle crosses past the player for the first time
     if (!o.dodged && wasAbovePlayer && o.y >= PLAYER_BOTTOM()) {
       o.dodged = true;
-      state.score += DODGE_POINTS;
+      const prevMultiplier = getMultiplier();
+      state.combo++;
+      const multiplier = getMultiplier();
+      state.score += DODGE_POINTS * multiplier;
+      if (multiplier > prevMultiplier) state.comboFlash = 40; // flash on level-up
       scoreAdded = true;
     }
 
@@ -55,6 +65,7 @@ export function updateObstacles() {
     if (invincible === 0 && rectsOverlap(p.x, p.y, p.w, p.h, o.x, o.y, o.w, o.h)) {
       state.lives--;
       state.invincible = INVINCIBLE_FRAMES;
+      state.combo = 0;
       spawnCrashParticles(o.x, o.y);
       playSound('hit');
       updateHUD(state.score, state.lives);

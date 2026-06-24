@@ -21,6 +21,9 @@ export const state = {
 
   dashOffsets: [0, 0],
 
+  combo: 0,          // consecutive dodges since last hit
+  comboFlash: 0,     // frames to show combo-up flash
+
   obstacles: [],
   coins: [],
   particles: [],
@@ -49,6 +52,8 @@ export function resetState() {
   state.player.x = LANE_CENTERS[1];
   state.player.targetX = LANE_CENTERS[1];
 
+  state.combo = 0;
+  state.comboFlash = 0;
   state.dashOffsets = [0, 0];
   state.obstacles = [];
   state.coins = [];
